@@ -32,9 +32,11 @@ public class HttpFilter implements Filter {
         httpRequest.setAttribute(CorrelationId.CORRELATION_ID, correlationId);
         MDC.put(CorrelationId.CORRELATION_ID, correlationId);
 
-        logger.info("Request {} for URL {}", httpRequest.getMethod(), httpRequest.getRequestURI());
-        chain.doFilter(request, response);
-
-        MDC.remove(CorrelationId.CORRELATION_ID);
+        try {
+            logger.info("Request {} for URL {}", httpRequest.getMethod(), httpRequest.getRequestURI());
+            chain.doFilter(request, response);
+        } finally {
+            MDC.remove(CorrelationId.CORRELATION_ID);
+        }
     }
 }

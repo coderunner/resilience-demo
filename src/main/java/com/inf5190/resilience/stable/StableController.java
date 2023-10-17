@@ -39,8 +39,14 @@ public class StableController {
 
     private final Logger log = LoggerFactory.getLogger(StableController.class);
 
+    /**
+     * Logique de Retry
+     * Maximum 3 essaies
+     * 1 sec entre les essaies
+     * Réessaie sur le code 500
+     */
     private final Retry retry = Retry.of("id", RetryConfig.<Response<String>>custom()
-            .maxAttempts(2)
+            .maxAttempts(3)
             .waitDuration(Duration.ofMillis(1000))
             .retryOnResult(response -> response.code() == 500)
             .failAfterMaxAttempts(true)
@@ -57,9 +63,12 @@ public class StableController {
             .client(client)
             .build();
 
+    // Création du client HTTP pour accéder au UnstableApi service.
     private final UnstableApi unstableService = retrofit.create(UnstableApi.class);
 
     public StableController() {
+        // Ajout d'un listener pour les retry qui ajoute l'information dans les
+        // journaux.
         this.retry.getEventPublisher().onRetry(e -> this.log.info("Retry attempt."));
     }
 
