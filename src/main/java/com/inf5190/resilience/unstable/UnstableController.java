@@ -15,7 +15,7 @@ import com.inf5190.resilience.model.User;
 @RestController
 @PropertySource("application.properties")
 public class UnstableController {
-    Logger log = LoggerFactory.getLogger(UnstableController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UnstableController.class);
 
     private final Random r = new Random();
 
@@ -24,9 +24,10 @@ public class UnstableController {
 
     @GetMapping("/unstable/users/{id}")
     public User getUser(@PathVariable("id") String id) throws InterruptedException {
+        LOG.info("Un log dans le controller INSTABLE.");
         if (this.r.nextInt(10) < this.unstableValue) {
             // Simulate errors
-            throw new RuntimeException("Out of Memory!");
+            throw new RuntimeException("Problème!");
         }
 
         return new User(id);

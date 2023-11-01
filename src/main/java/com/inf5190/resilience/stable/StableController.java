@@ -37,7 +37,7 @@ public class StableController {
                 @Header(CorrelationId.CORRELATION_ID) String correlationId);
     }
 
-    private final Logger log = LoggerFactory.getLogger(StableController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StableController.class);
 
     /**
      * Logique de Retry
@@ -69,12 +69,13 @@ public class StableController {
     public StableController() {
         // Ajout d'un listener pour les retry qui ajoute l'information dans les
         // journaux.
-        this.retry.getEventPublisher().onRetry(e -> this.log.info("Retry attempt."));
+        this.retry.getEventPublisher().onRetry(e -> LOG.info("Retry attempt."));
     }
 
     @GetMapping("/stable/users/{id}")
     public User get(@PathVariable("id") String userId, HttpServletRequest request) {
         try {
+            LOG.info("Un log dans le controller STABLE.");
             Response<User> r = this.unstableService
                     .getUser("userId", (String) request.getAttribute(CorrelationId.CORRELATION_ID))
                     .execute();

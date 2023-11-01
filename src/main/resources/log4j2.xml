@@ -7,12 +7,13 @@
         <File name="File" fileName="output.log" bufferedIO="false">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{1.} - %X{x-correlation-id} - %msg%n"/>
         </File>
-        <File name="Access" fileName="access.log" bufferedIO="false">
+        <RollingFile name="Access" fileName="access.log" filePattern="access-%i.log" ignoreExceptions="false" max="4">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{1.} - %X{x-correlation-id} - %msg%n"/>
-        </File>
+            <SizeBasedTriggeringPolicy size="1KB" />
+        </RollingFile>
     </Appenders>
     <Loggers>
-        <Root level="WARN">
+        <Root level="INFO">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Root>
